@@ -1,0 +1,59 @@
+import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:lottie/lottie.dart';
+
+extension TextThemeExtension on BuildContext {
+  TextTheme get textTheme {
+    return Theme.of(this).textTheme;
+  }
+}
+
+extension ColorSchemeExt on BuildContext {
+  ColorScheme get colorScheme {
+    return Theme.of(this).colorScheme;
+  }
+}
+
+OverlayEntry? _loadingEntry;
+
+extension LoaderContext on BuildContext {
+  void showOverlay() {
+    if (_loadingEntry != null) return;
+    _loadingEntry = OverlayEntry(
+      builder: (cotext) {
+        return Material(
+          color: Colors.transparent,
+          child: Container(
+            color: Colors.black87.withValues(alpha: 0.8),
+            width: 1.sw,
+            height: 1.sh,
+            child: Center(
+              child: SizedBox(
+                width: 100.w,
+                height: 100.w,
+                child: Lottie.asset("assets/lottie/loading.json"),
+              ),
+            ),
+          ),
+        );
+      },
+    );
+    try {
+      Overlay.of(this).insert(_loadingEntry!);
+    } catch (e) {
+      _loadingEntry!.remove();
+    }
+  }
+
+  void hideOverlay() {
+    if (_loadingEntry == null) return;
+    try {
+      _loadingEntry!.remove();
+      _loadingEntry = null;
+    } catch (e) {
+      debugPrint(e.toString());
+    } finally {
+      _loadingEntry = null;
+    }
+  }
+}
