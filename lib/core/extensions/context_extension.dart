@@ -57,3 +57,24 @@ extension LoaderContext on BuildContext {
     }
   }
 }
+
+extension Modal on BuildContext {
+  Future<dynamic> showBottomSheet({required Widget child}) async {
+    if (mounted) {
+      return showModalBottomSheet(
+        clipBehavior: .none,
+        shape: RoundedRectangleBorder(
+          borderRadius: .only(
+            topLeft: .circular(5.r),
+            topRight: .circular(5.r),
+          ),
+        ),
+        isScrollControlled: true,
+        context: this,
+        builder: (context) {
+          return child;
+        },
+      );
+    }
+  }
+}

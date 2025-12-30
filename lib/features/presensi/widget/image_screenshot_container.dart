@@ -24,22 +24,24 @@ class ImageScreenshotContainer extends StatelessWidget {
       controller: controller,
       child: SizedBox(
         width: 0.9.sw,
-        height: 0.5.sh,
+        height: 0.7.sh,
         child: Stack(
           children: [
             // Background foto
             Positioned.fill(
-              child: Image.file(File(imagePath), fit: BoxFit.fill),
+              child: Image.file(File(imagePath), fit: BoxFit.cover),
             ),
 
-            // Overlay hitam transparan biar teks kebaca
             Positioned.fill(
               child: Container(
                 decoration: BoxDecoration(
                   gradient: LinearGradient(
                     begin: Alignment.bottomCenter,
                     end: Alignment.topCenter,
-                    colors: [Colors.black.withOpacity(0.6), Colors.transparent],
+                    colors: [
+                      Colors.black.withValues(alpha: 0.6),
+                      Colors.transparent,
+                    ],
                   ),
                 ),
               ),

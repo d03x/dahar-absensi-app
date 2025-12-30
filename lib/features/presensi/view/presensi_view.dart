@@ -1,5 +1,3 @@
-import 'dart:typed_data';
-
 import 'package:dakos/core/components/sytle_seven_clock.dart';
 import 'package:dakos/core/extensions/context_extension.dart';
 import 'package:dakos/core/extensions/string_extension.dart';
@@ -51,6 +49,7 @@ class PresensiView extends HookConsumerWidget {
   ) {
     final imagePaths = ref.watch(cameraViewModel);
     final address = ref.watch(locationServiceProvider);
+
     //screensho
     return Padding(
       padding: .symmetric(horizontal: 8.w),
@@ -58,15 +57,7 @@ class PresensiView extends HookConsumerWidget {
         mainAxisAlignment: .center,
         crossAxisAlignment: .center,
         children: [
-          if (imagePaths.capturedImage == null)
-            StyleSevenClock12H(size: 200.w, timezone: "Asia/Jakarta")
-          else
-            ImageScreenshotContainer(
-              controller: controller,
-              imagePath: imagePaths.capturedImage!.path,
-              location: address.value,
-              datetime: imagePaths.timestamp!.toLocaleTime,
-            ),
+          StyleSevenClock12H(size: 200.w, timezone: "Asia/Jakarta"),
           SizedBox(height: 12.h),
         ],
       ),
@@ -83,11 +74,78 @@ class PresensiView extends HookConsumerWidget {
     );
   }
 
+  Widget _showAbsensiModal(
+    BuildContext context,
+    WidgetRef ref,
+    ScreenshotController controller,
+    CameraState camera,
+  ) {
+    final address = ref.watch(locationServiceProvider);
+    return SizedBox(
+      width: 1.sw,
+      height: 0.9.sh,
+      child: SingleChildScrollView(
+        child: Column(
+          children: [
+            SizedBox(height: 24.h),
+            ClipRRect(
+              borderRadius: .circular(10.r),
+              child: ImageScreenshotContainer(
+                controller: controller,
+                location: address.value,
+                imagePath: camera.capturedImage!.path,
+                datetime: camera.timestamp!.toLocaleTime,
+              ),
+            ),
+            SizedBox(height: 10.h),
+            Row(
+              children: [
+                SizedBox(width: 15.w),
+                Expanded(
+                  child: ElevatedButton.icon(
+                    icon: Icon(Icons.save),
+                    style: ButtonStyle(
+                      backgroundColor: .all(Colors.blueAccent),
+                      foregroundColor: .all(Colors.white),
+                    ),
+                    onPressed: () {
+                      Navigator.pop(context);
+                    },
+                    label: Text("SIMPAN PRESENSI"),
+                  ),
+                ),
+                SizedBox(width: 10.w),
+                IconButton(
+                  iconSize: 28.w,
+                  onPressed: () {
+                    final _ = ref.refresh(cameraViewModel);
+                    Navigator.pop(context);
+                  },
+                  icon: Icon(Icons.cancel_outlined),
+                ),
+                SizedBox(width: 15.w),
+              ],
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final controller = useScreenshotController();
-    final image = useState<Uint8List?>(null);
-
+    final camera = ref.watch(cameraViewModel);
+    useEffect(() {
+      Future.microtask(() {
+        if (context.mounted && ModalRoute.of(context)!.isCurrent == true) {
+          context.showBottomSheet(
+            child: _showAbsensiModal(context, ref, controller, camera),
+          );
+        }
+      });
+      return null;
+    }, [camera]);
     return Scaffold(
       floatingActionButton: buildFingerprintButton(context, ref),
       appBar: AppBar(
@@ -112,20 +170,6 @@ class PresensiView extends HookConsumerWidget {
             SizedBox(height: 29.h),
             _buildBody(context, ref, controller),
             SizedBox(height: 40.h),
-            InkWell(
-              onTap: () async {
-                final spath = await controller.capture(pixelRatio: 3.0);
-                image.value = spath;
-              },
-              child: Text(
-                "Bagikan Foto",
-                style: GoogleFonts.poppins(
-                  fontSize: 14.sp,
-                  color: Colors.blue,
-                  decoration: .underline,
-                ),
-              ),
-            ),
           ],
         ),
       ),
