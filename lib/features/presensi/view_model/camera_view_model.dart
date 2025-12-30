@@ -87,7 +87,6 @@ class CameraViewModel extends Notifier<CameraState> {
   }
 }
 
-final cameraViewModel =
-    NotifierProvider.autoDispose<CameraViewModel, CameraState>(() {
-      return CameraViewModel();
-    });
+final cameraViewModel = NotifierProvider<CameraViewModel, CameraState>(() {
+  return CameraViewModel();
+});
