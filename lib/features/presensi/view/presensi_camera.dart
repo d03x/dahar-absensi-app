@@ -10,6 +10,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
+import 'package:lottie/lottie.dart';
 
 class PresensiCamera extends HookConsumerWidget {
   const PresensiCamera({super.key});
@@ -60,37 +61,28 @@ class PresensiCamera extends HookConsumerWidget {
           else
             Center(child: CupertinoActivityIndicator(radius: 20.r)),
           if (cameraState.isInitialized)
-            ColorFiltered(
-              colorFilter: .mode(Colors.black45, .srcOut),
-              child: Stack(
-                children: [
-                  Container(
-                    decoration: const BoxDecoration(
-                      color: Colors.transparent,
-                      backgroundBlendMode: BlendMode.dstOut,
-                    ),
-                  ),
-                  Align(
-                    alignment: const Alignment(
-                      0,
-                      -0.2,
-                    ), // Sedikit ke atas tengah
-                    child: Container(
-                      height: 0.45.sh,
-                      width: 0.8.sw,
-                      decoration: BoxDecoration(
-                        color: Colors.black,
-                        borderRadius: BorderRadius.circular(45.r),
-                        border: Border.all(
-                          color: Colors.white.withValues(alpha: 0.5),
-                          width: 2,
-                        ),
-                      ),
-                    ),
-                  ),
-                ],
+            Align(
+              alignment: const Alignment(0, -0.2), // Sedikit ke atas tengah
+              child: Lottie.asset("assets/lottie/camera_scanning.json"),
+            ),
+          Positioned(
+            bottom: 0,
+            left: 0,
+            right: 0,
+            height: 160.h,
+            child: Container(
+              decoration: BoxDecoration(
+                gradient: LinearGradient(
+                  end: .topCenter,
+                  begin: .bottomCenter,
+                  colors: [
+                    Colors.black.withValues(alpha: 0.8),
+                    Colors.transparent,
+                  ],
+                ),
               ),
             ),
+          ),
 
           Positioned(
             top: 0,
@@ -275,6 +267,8 @@ class PresensiCamera extends HookConsumerWidget {
                     ],
                   ),
           ),
+
+          //cek apakah alamat empty
         ],
       ),
     );
