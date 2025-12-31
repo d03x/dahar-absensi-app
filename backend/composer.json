@@ -1,6 +1,7 @@
 {
     "require": {
         "firebase/php-jwt": "^7.0",
-        "symfony/http-foundation": "^8.0"
+        "symfony/http-foundation": "^8.0",
+        "catfan/medoo": "^2.2"
     }
 }
