@@ -34,18 +34,18 @@ CustomTransitionPage buildTransitionPage({
   return CustomTransitionPage(
     key: state.pageKey,
     child: child,
-    transitionDuration: const Duration(milliseconds: 500),
+    transitionDuration: const Duration(milliseconds: 400),
     transitionsBuilder: (context, animation, secondaryAnimation, child) {
-      // Menggunakan Logic "Premium Zoom" yang tadi saya buatkan
-      final curve = CurvedAnimation(
-        parent: animation,
-        curve: Curves.fastOutSlowIn,
-      );
-      final tweenAnimated = Tween<double>(begin: 0.95, end: 1.0);
-      return FadeTransition(
-        opacity: curve,
-        child: ScaleTransition(
-          scale: tweenAnimated.animate(curve),
+      final tween = Tween(begin: Offset(0.0, 1.0), end: Offset.zero);
+      final animate = CurveTween(curve: Curves.ease);
+
+      final anims = CurvedAnimation(parent: animation, curve: Curves.linear);
+      final bounce = Tween<double>(begin: 0.5, end: 1);
+
+      return ScaleTransition(
+        scale: bounce.animate(anims),
+        child: SlideTransition(
+          position: animation.drive(tween.chain(animate)),
           child: child,
         ),
       );

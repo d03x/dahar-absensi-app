@@ -9,9 +9,13 @@ import 'package:intl/date_symbol_data_local.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  await ScreenUtil.ensureScreenSize();
-  await initializeDateFormatting('id_ID', null);
-  await dotenv.load(fileName: '.env');
+  //LOAD SEMUA LIBRARY YANG DIBUTUHKAN SEBELUM APP DIJALANKAN
+  await Future.wait([
+    ScreenUtil.ensureScreenSize(),
+    initializeDateFormatting('id_ID', null),
+    dotenv.load(fileName: '.env'),
+  ]);
+  //RUN APP
   runApp(
     ProviderScope(
       overrides: [appConfigProvider.overrideWithValue(AppConfig.fromEnv())],

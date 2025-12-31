@@ -16,6 +16,7 @@ class CameraState extends Equatable {
     this.capturedImage,
     this.isInitialized = false,
   });
+  bool get hasImage => capturedImage != null;
   CameraState copyWith({
     CameraController? controller,
     bool? isCapturing,

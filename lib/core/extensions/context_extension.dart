@@ -59,6 +59,10 @@ extension LoaderContext on BuildContext {
 }
 
 extension Modal on BuildContext {
+  bool get isCurrentModal {
+    return ModalRoute.of(this)?.isCurrent ?? false;
+  }
+
   Future<dynamic> showBottomSheet({required Widget child}) async {
     if (mounted) {
       return showModalBottomSheet(
