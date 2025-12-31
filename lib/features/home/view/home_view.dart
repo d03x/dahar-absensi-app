@@ -4,8 +4,9 @@ import 'package:flutter_animate/flutter_animate.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:hooks_riverpod/hooks_riverpod.dart';
 
-class HomeView extends StatelessWidget {
+class HomeView extends HookConsumerWidget {
   const HomeView({super.key});
   Widget _headerHome() {
     return Padding(
@@ -273,7 +274,7 @@ class HomeView extends StatelessWidget {
   }
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     return Scaffold(
       body: Column(
         mainAxisAlignment: .start,

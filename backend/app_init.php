@@ -12,6 +12,7 @@ if (DEBUG_MODE) {
 }
 define("BASE_PATH", __DIR__ . DIRECTORY_SEPARATOR);
 $autoload_file = __DIR__ . DIRECTORY_SEPARATOR . "vendor/autoload.php";
+
 if (!file_exists($autoload_file)) {
     die("Not found autoload file this app requires this file");
 }
@@ -19,6 +20,8 @@ require_once $autoload_file;
 ############## INCLUDE HELPERS
 require BASE_PATH . "helpers/ResponseHelpers.php";
 require_once __DIR__ . "/helpers/ErrorHandler.php";
+require_once __DIR__ . "/helpers/Authentication.php";
+
 ################### SET ERROR HANDLER 
 set_exception_handler(['ErrorHandler', 'handleException']);
 set_error_handler(['ErrorHandler', 'handleError']);

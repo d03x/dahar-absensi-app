@@ -6,7 +6,7 @@ class PresensiHistoryProvider extends AsyncNotifier<String> {
   Future<String> build() async {
     return fetchPresensiHistory();
   }
-
+  
   Future<String> fetchPresensiHistory() async {
     final repo = ref.watch(presensiRepositoryProvider);
     state = AsyncValue.loading();

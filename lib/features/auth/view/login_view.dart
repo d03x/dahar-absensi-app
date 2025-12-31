@@ -1,4 +1,5 @@
 import 'package:dakos/core/extensions/context_extension.dart';
+import 'package:dakos/features/auth/state/login_state.dart';
 import 'package:dakos/features/auth/view_model/login_view_model.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -53,8 +54,10 @@ class LoginView extends HookConsumerWidget {
     final auth = ref.watch(loginViewModel);
 
     ref.listen(loginViewModel, (prev, next) {
-      if (!next.isLoading && prev!.loginError.isNotEmpty) {
-        context.cupertinoAlert(content: prev.loginError);
+      if (next is LoginFailedState) {
+        context.cupertinoAlert(content: next.error);
+      } else if (next is LoginSuccessState) {
+        context.cupertinoAlert(content: "Horry Berhasil login");
       }
     });
     return Scaffold(
@@ -195,7 +198,7 @@ class LoginView extends HookConsumerWidget {
                                                       passwordController.text,
                                                 );
                                           },
-                                          child: auth.isLoading
+                                          child: auth is LoginLoadingState
                                               ? CupertinoActivityIndicator()
                                               : Text("Login"),
                                         )

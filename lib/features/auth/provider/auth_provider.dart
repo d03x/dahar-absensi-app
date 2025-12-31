@@ -1,48 +1,28 @@
-import 'package:dakos/features/splash/view_model/splash_view_model.dart';
+import 'package:dakos/features/auth/services/auth_token_service.dart';
+import 'package:dakos/features/auth/state/login_state.dart';
+import 'package:dakos/features/auth/view_model/login_view_model.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 
 class AuthProvider extends AsyncNotifier<bool> {
   @override
-  bool build() {
-    return false;
+  Future<bool> build() async {
+    final tokenProvider = ref.watch(authTokenServiceProvider);
+    ref.listen(loginViewModel, (prev, next) async {
+      if (next is LoginSuccessState) {
+        await tokenProvider.saveToken(next.user.jwt.token);
+        setLogin();
+      }
+    });
+    final token = await tokenProvider.getToken();
+    return token != null;
   }
 
   void setLogin() {
     state = AsyncData(true);
   }
 
-  Future<void> checkLoginStatus() async {
-    // 1. Mulai Loading
-    state = const AsyncValue.loading();
-
-    // Ambil notifier pesan biar bisa di-update
-    final messageNotifier = ref.read(splashMessageProvider.notifier);
-
-    try {
-      // --- TAHAP 1: Cek Koneksi ---
-      messageNotifier.state = State(
-        show: true,
-        message: "Menghubungkan ke server Lugwa...",
-      );
-      await Future.delayed(const Duration(seconds: 1));
-
-      messageNotifier.state = State(
-        show: true,
-        message: "Memeriksa pembaruan...",
-      );
-      await Future.delayed(const Duration(milliseconds: 800));
-
-      messageNotifier.state = State(
-        show: true,
-        message: "Verifikasi sesi pengguna...",
-      );
-      await Future.delayed(const Duration(milliseconds: 800));
-      messageNotifier.state = State(show: false, message: "Suceesss...");
-      await Future.delayed(const Duration(milliseconds: 900));
-    } catch (e, stack) {
-      messageNotifier.state = State(show: false, message: "Gagal terhubung.");
-      state = AsyncValue.error(e, stack);
-    }
+  void logout() {
+    state = AsyncData(false);
   }
 }
 

@@ -12,7 +12,7 @@ if (!empty($data)) {
     $username = $data['email'] ?? null;
     $password = $data['password'] ?? null;
     if (empty($username) && empty($password)) {
-        return Response::error("Email dan pasword tidak boleh kosong");
+        return Response::error("Email dan pasword tidak boleh kosong", HttpResponse::HTTP_UNPROCESSABLE_ENTITY);
     }
     $user = database()->get("users", ['email', 'password', 'id', 'name'], [
         'email' => $username,
@@ -33,5 +33,5 @@ if (!empty($data)) {
             ]);
         }
     }
-    return Response::error("Akun tidak ditemukan / email atau password salah $username,$password", HttpResponse::HTTP_UNPROCESSABLE_ENTITY);
+    return Response::error("Akun tidak ditemukan / email atau password salah", HttpResponse::HTTP_UNPROCESSABLE_ENTITY);
 }

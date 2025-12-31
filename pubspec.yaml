@@ -55,6 +55,7 @@ dependencies:
   flutter_feature_camera: ^0.2.5
   flutter_hooks: ^0.21.3+1
   screenshot: ^3.0.0
+  flutter_secure_storage: ^10.0.0
 
 dev_dependencies:
   flutter_test:

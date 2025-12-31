@@ -1,5 +1,7 @@
 import 'package:dakos/features/auth/model/user_model.dart';
 import 'package:dakos/features/auth/services/user_services.dart';
+import 'package:dakos/features/auth/state/auth_state.dart';
+import 'package:dakos/features/auth/state/login_state.dart';
 import 'package:dio/dio.dart';
 import 'package:equatable/equatable.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
@@ -26,49 +28,32 @@ class LoginState extends Equatable {
   List get props => [isLoggedIn, isLoading, loginError];
 }
 
-class LoginViewModel extends Notifier<LoginState> {
+class LoginViewModel extends Notifier<AuthState> {
   @override
-  LoginState build() {
-    return LoginState(isLoggedIn: false, loginError: '', isLoading: false);
+  AuthState build() {
+    return AuthState();
   }
 
   Future<void> login({required String email, required String password}) async {
     final userService = ref.watch(userServiceProvider);
-    state = state.copyWith(isLoggedIn: false, isLoading: true);
+    state = LoginLoadingState();
     try {
       final UserModel user = await userService.login(
         email: email.trim(),
         password: password.trim(),
       );
-      print(user.jwt.token);
-      state = state.copyWith(
-        isLoggedIn: false,
-        isLoading: false,
-        loginError: '',
-      );
+      state = LoginSuccessState(user: user);
     } on DioException catch (e) {
-      if (e.response?.statusCode == 422) {
-        final response = e.response!.data;
-        state = state.copyWith(
-          isLoggedIn: false,
-          isLoading: false,
-          loginError: response['message'],
-        );
+      if (e.response!.statusCode == 422) {
+        state = LoginFailedState.fromJson(e.response!.data);
       }
     } catch (e) {
-      state = state.copyWith(
-        isLoggedIn: false,
-        isLoading: false,
-        loginError: e.toString(),
-      );
-    } finally {
-      state.copyWith(isLoading: false);
+      state = LoginFailedState(error: e.toString());
     }
-    state = state.copyWith(isLoggedIn: false, isLoading: false);
   }
 }
 
-final loginViewModel = NotifierProvider.autoDispose<LoginViewModel, LoginState>(
+final loginViewModel = NotifierProvider.autoDispose<LoginViewModel, AuthState>(
   () {
     return LoginViewModel();
   },
