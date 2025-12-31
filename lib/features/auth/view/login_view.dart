@@ -1,18 +1,22 @@
-import 'package:dakos/features/auth/provider/auth_provider.dart';
+import 'package:dakos/features/auth/view_model/login_view_model.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:hooks_riverpod/hooks_riverpod.dart';
 
-class LoginView extends ConsumerWidget {
+class LoginView extends HookConsumerWidget {
   const LoginView({super.key});
   Widget _buildTextField(
     String labelText, {
+    required TextEditingController controller,
     bool obscureText = false,
     IconData? prefixIcon,
   }) {
     return TextFormField(
+      controller: controller,
       cursorColor: Colors.grey,
       obscureText: obscureText,
       style: GoogleFonts.actor(fontSize: 14.sp),
@@ -42,6 +46,10 @@ class LoginView extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final emailController = useTextEditingController();
+    final passwordController = useTextEditingController();
+
+    final auth = ref.watch(loginViewModel);
     return Scaffold(
       resizeToAvoidBottomInset: false,
       body: SafeArea(
@@ -130,11 +138,13 @@ class LoginView extends ConsumerWidget {
                           child: Column(
                             children: [
                               _buildTextField(
+                                controller: emailController,
                                 "Email",
                                 prefixIcon: Icons.alternate_email,
                               ).animate(delay: 700.ms).moveX(begin: -20),
                               SizedBox(height: 20.h),
                               _buildTextField(
+                                controller: passwordController,
                                 "Password",
                                 obscureText: true,
                                 prefixIcon: Icons.lock,
@@ -171,10 +181,16 @@ class LoginView extends ConsumerWidget {
                                           ),
                                           onPressed: () {
                                             ref
-                                                .read(authProvider.notifier)
-                                                .setLogin();
+                                                .watch(loginViewModel.notifier)
+                                                .login(
+                                                  email: emailController.text,
+                                                  password:
+                                                      passwordController.text,
+                                                );
                                           },
-                                          child: Text("Login"),
+                                          child: auth.isLoading
+                                              ? CupertinoActivityIndicator()
+                                              : Text("Login"),
                                         )
                                         .animate(delay: 900.ms)
                                         .fadeIn()

@@ -1,6 +1,6 @@
 import 'package:dakos/core/components/shimmer_box.dart';
 import 'package:dakos/core/providers/location_service_provider.dart';
-import 'package:dakos/features/presensi/view_model/camera_view_model.dart';
+import 'package:dakos/features/presensi/view/view_model/camera_view_model.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';

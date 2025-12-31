@@ -1,7 +1,6 @@
 import 'package:dakos/core/extensions/context_extension.dart';
 import "package:dakos/core/extensions/google_fonts_extension.dart";
-import 'package:dakos/features/presensi/view_model/presensi_view_model.dart';
-import 'package:flutter/cupertino.dart';
+import 'package:dakos/features/presensi/view/view_model/presensi_view_model.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:go_router/go_router.dart';
@@ -44,7 +43,7 @@ class PresensiHistory extends HookConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     // final presensiState = ref.read(presensiViewModel.notifier);
-    final presensi = ref.watch(presensiViewModel);
+    final historyPresensi = ref.watch(presensiHistoryProvider);
 
     return Column(
       crossAxisAlignment: .start,
@@ -66,10 +65,10 @@ class PresensiHistory extends HookConsumerWidget {
           ),
         ),
         SizedBox.fromSize(size: .fromHeight(5.h)),
-        presensi.when(
+        historyPresensi.when(
           data: (data) => _buildFooter(),
           error: (error, stackTrace) => Text("ERROR: ${error.toString()}"),
-          loading: () => CupertinoActivityIndicator(),
+          loading: () => Center(child: CircularProgressIndicator()),
         ),
       ],
     );

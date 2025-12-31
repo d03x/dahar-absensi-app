@@ -2,9 +2,9 @@ import 'package:dakos/core/extensions/google_fonts_extension.dart';
 import 'package:dakos/core/extensions/string_extension.dart';
 import 'package:dakos/core/hooks/screenshot_hook_controller.dart';
 import 'package:dakos/core/providers/location_service_provider.dart';
-import 'package:dakos/features/presensi/view_model/camera_view_model.dart';
-import 'package:dakos/features/presensi/view_model/presensi_view_model.dart';
-import 'package:dakos/features/presensi/widget/image_screenshot_container.dart';
+import 'package:dakos/features/presensi/view/view_model/camera_view_model.dart';
+import 'package:dakos/features/presensi/view/view_model/presensi_view_model.dart';
+import 'package:dakos/features/presensi/view/widget/image_screenshot_container.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -16,10 +16,17 @@ class PresensiModal extends HookConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final address = ref.watch(locationServiceProvider);
     final camera = ref.watch(cameraViewModel);
-    final presensi = ref.read(presensiProvider.notifier);
     final controller = useScreenshotController();
-    final presensiState = ref.watch(presensiProvider);
-
+    /**
+     * PRESENSI
+     */
+    final presensiVM = ref.watch(presensiViewModel);
+    final presensiVMNotifier = ref.read(presensiViewModel.notifier);
+    ref.listen(presensiViewModel, (prev, next) {
+      if (!next.isLoading) {
+        Navigator.pop(context);
+      }
+    });
     return SizedBox(
       width: 1.sw,
       height: 0.9.sh,
@@ -39,7 +46,6 @@ class PresensiModal extends HookConsumerWidget {
             SizedBox(height: 17.h),
             Row(
               children: [
-                Text(presensiState.isLoading.toString()),
                 SizedBox(width: 15.w),
                 Expanded(
                   child: ElevatedButton.icon(
@@ -56,14 +62,8 @@ class PresensiModal extends HookConsumerWidget {
                         ),
                       ),
                     ),
-                    onPressed: () async {
-                      try {
-                        await presensi.present();
-                      } catch (e) {
-                        print(e.toString());
-                      }
-                    },
-                    label: !presensiState.isLoading
+                    onPressed: presensiVMNotifier.present,
+                    label: !presensiVM.isLoading
                         ? "Simpan Presensi".toPoppins(
                             style: TextStyle(
                               fontSize: 13.sp,

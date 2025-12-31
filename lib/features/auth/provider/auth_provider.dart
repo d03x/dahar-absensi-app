@@ -4,7 +4,7 @@ import 'package:hooks_riverpod/hooks_riverpod.dart';
 class AuthProvider extends AsyncNotifier<bool> {
   @override
   bool build() {
-    return true;
+    return false;
   }
 
   void setLogin() {
