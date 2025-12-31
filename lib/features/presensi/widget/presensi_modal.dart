@@ -18,6 +18,7 @@ class PresensiModal extends HookConsumerWidget {
     final camera = ref.watch(cameraViewModel);
     final presensi = ref.read(presensiProvider.notifier);
     final controller = useScreenshotController();
+    final presensiState = ref.watch(presensiProvider);
 
     return SizedBox(
       width: 1.sw,
@@ -38,6 +39,7 @@ class PresensiModal extends HookConsumerWidget {
             SizedBox(height: 17.h),
             Row(
               children: [
+                Text(presensiState.isLoading.toString()),
                 SizedBox(width: 15.w),
                 Expanded(
                   child: ElevatedButton.icon(
@@ -56,22 +58,20 @@ class PresensiModal extends HookConsumerWidget {
                     ),
                     onPressed: () async {
                       try {
-                        presensi.present();
-                        ref.invalidate(presensiHistoryProvider);
-                        if (context.mounted) {
-                          Navigator.pop(context);
-                        }
+                        await presensi.present();
                       } catch (e) {
                         print(e.toString());
                       }
                     },
-                    label: "Simpan Presensi".toPoppins(
-                      style: TextStyle(
-                        fontSize: 13.sp,
-                        fontWeight: .w500,
-                        color: CupertinoColors.lightBackgroundGray,
-                      ),
-                    ),
+                    label: !presensiState.isLoading
+                        ? "Simpan Presensi".toPoppins(
+                            style: TextStyle(
+                              fontSize: 13.sp,
+                              fontWeight: .w500,
+                              color: CupertinoColors.lightBackgroundGray,
+                            ),
+                          )
+                        : "Loading...".toPoppins(),
                   ),
                 ),
                 SizedBox(width: 10.w),

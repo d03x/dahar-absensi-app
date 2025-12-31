@@ -9,7 +9,7 @@ class PresensiRepository {
 
   Future<String> postAbsensi() async {
     // Simulasi pengambilan data presensi dari API atau database
-    await Future.delayed(Duration(seconds: 5));
+    await Future.delayed(Duration(seconds: 2));
     return "WKWK";
   }
 }
