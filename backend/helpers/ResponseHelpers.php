@@ -7,7 +7,7 @@ class Response
 
     public static function json($data = [], int $status = 200)
     {
-        $response = new JsonResponse($data, 200);
+        $response = new JsonResponse($data, $status);
         $response->send(true);
     }
 

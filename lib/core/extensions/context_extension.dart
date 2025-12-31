@@ -1,3 +1,4 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:lottie/lottie.dart';
@@ -61,6 +62,24 @@ extension LoaderContext on BuildContext {
 extension Modal on BuildContext {
   bool get isCurrentModal {
     return ModalRoute.of(this)?.isCurrent ?? false;
+  }
+
+  void cupertinoAlert({required String content}) {
+    showCupertinoDialog(
+      context: this,
+      builder: (context) => CupertinoAlertDialog(
+        title: Text("Oops"), // Judul
+        content: Text(content), // Pesan error dari state
+        actions: [
+          CupertinoDialogAction(
+            child: Text("OK"),
+            onPressed: () {
+              Navigator.pop(context);
+            },
+          ),
+        ],
+      ),
+    );
   }
 
   Future<dynamic> showBottomSheet({required Widget child}) async {

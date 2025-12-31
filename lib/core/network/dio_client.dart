@@ -8,7 +8,17 @@ class DioClient {
   DioClient({required this.config});
 
   Dio get instance {
-    return Dio(BaseOptions(baseUrl: config.baseURL));
+    return Dio(
+      BaseOptions(
+        baseUrl: config.baseURL,
+        headers: {
+          'Content-Type': 'application/json',
+          'Accept': 'application/json',
+        },
+        connectTimeout: const Duration(seconds: 10),
+        receiveTimeout: const Duration(seconds: 10),
+      ),
+    );
   }
 }
 
