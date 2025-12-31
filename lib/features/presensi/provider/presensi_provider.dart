@@ -1,32 +1,25 @@
 import 'package:dakos/features/presensi/repo/presensi_repository.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-class PresensiDashboardState {}
-
-class PresensiProvider extends AsyncNotifier<PresensiDashboardState> {
+class PresensiProvider extends AsyncNotifier {
   @override
-  Future<PresensiDashboardState> build() async {
-    return _fetchAllData();
+  Future<void> build() async {
+    return;
   }
 
-  Future<PresensiDashboardState> _fetchAllData() async {
-    Future.wait([loadHistoryPresensiToday()]);
-    return PresensiDashboardState();
-  }
+  Future<void> present() async {
+    final repo = ref.read(presensiRepositoryProvider);
 
-  Future<void> loadHistoryPresensiToday() async {
-    final pres = ref.read(presensiRepositoryProvider);
+    // 1. Set Loading (Biar UI tau lagi proses kirim)
     state = const AsyncValue.loading();
+
     state = await AsyncValue.guard(() async {
-      await pres.fetchHistoryPresensiToday();
-      return PresensiDashboardState();
+      await repo.postAbsensi();
     });
   }
 }
 
 final presensiProvider =
-    AsyncNotifierProvider.autoDispose<PresensiProvider, PresensiDashboardState>(
-      () {
-        return PresensiProvider();
-      },
-    );
+    AsyncNotifierProvider.autoDispose<PresensiProvider, void>(() {
+      return PresensiProvider();
+    });

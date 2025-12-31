@@ -3,6 +3,7 @@ import 'package:dakos/core/extensions/string_extension.dart';
 import 'package:dakos/core/hooks/screenshot_hook_controller.dart';
 import 'package:dakos/core/providers/location_service_provider.dart';
 import 'package:dakos/features/presensi/view_model/camera_view_model.dart';
+import 'package:dakos/features/presensi/view_model/presensi_view_model.dart';
 import 'package:dakos/features/presensi/widget/image_screenshot_container.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -15,8 +16,9 @@ class PresensiModal extends HookConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final address = ref.watch(locationServiceProvider);
     final camera = ref.watch(cameraViewModel);
+    final presensi = ref.read(presensiProvider.notifier);
     final controller = useScreenshotController();
-    
+
     return SizedBox(
       width: 1.sw,
       height: 0.9.sh,
@@ -52,8 +54,16 @@ class PresensiModal extends HookConsumerWidget {
                         ),
                       ),
                     ),
-                    onPressed: () {
-                      Navigator.pop(context);
+                    onPressed: () async {
+                      try {
+                        presensi.present();
+                        ref.invalidate(presensiHistoryProvider);
+                        if (context.mounted) {
+                          Navigator.pop(context);
+                        }
+                      } catch (e) {
+                        print(e.toString());
+                      }
                     },
                     label: "Simpan Presensi".toPoppins(
                       style: TextStyle(
